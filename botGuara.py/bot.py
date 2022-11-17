@@ -1,9 +1,12 @@
 
 import asyncio
+from distutils import config
 from fileinput import filename
 from http import client
+import json
 from sys import prefix
 from tkinter.messagebox import NO
+from unicodedata import name
 from urllib import response
 import discord
 from discord.ext import commands, tasks
@@ -55,7 +58,12 @@ class YTDLSource(discord.PCMVolumeTransformer):
 
 client = commands.Bot(command_prefix= "?" )
 
-status = ["XVideos", "com JandersIGL", "Programando"]
+status = ["Fan do IGL", "com JandersIGL", "Python", "com Beicidis"]
+        
+        
+with open('config.json') as e:
+    infos = json.load(e)
+    TOKEN = infos['TOKEN_SECRETO']
 
 @client.event
 async def on_ready():
@@ -79,7 +87,7 @@ async def ping(ctx):
 @client.command(name='hello', help="This is a hello command")
 async def hello(ctx):
     responses = ["**Resmungar** Por que você me chamou corno?",
-                 "Bom dia amigo você e um amigo!",
+                 "Bom dia amigo, você e um amigo!",
                  "Oiiii gatinho",
                  "Você e fan do IGL?",
                  "Olá Mestre",
@@ -89,9 +97,9 @@ async def hello(ctx):
 @client.command(name="die", help="This command returns a random last word")
 async def credits(ctx):
     responses = [
-        "why have you brought my short life to an end",
-        "I could have done so much more",
-        "I have a family, kill them",
+        "Por que você trouxe minha curta vida ao fim",
+        "Eu poderia ter feito muito mais",
+        "Eu tenho uma família, mate-os",
     ]
     await ctx.send(choice(responses))
     
@@ -116,13 +124,21 @@ async def dev(ctx):
 @client.command(name="chines", help="This command chines")
 async def chines(ctx):
     verif = 1  
-    for verif in range(4):
-        if verif == 1 and verif != 2 and verif != 4:
+    for verif in range(2):
+        if verif >= 1:
             await ctx.send('Vai toma sua cú')
         else:
             await ctx.send('Porque não Trabalha')
+
+
+@client.command(name="angolano", help="This command return angolano")
+async def angolano(ctx, text):
+        list = 10
+        while (list < 10):
+            await ctx.send("lamina pastinha")
+            list+1
     
-        
+                                
 @client.command(name="play", help="This command plays music")
 async def play(ctx, url):
     if not ctx.message.author.voice:
@@ -144,14 +160,29 @@ async def play(ctx, url):
         
     await ctx.send("**Now Playing:** {}".format(player.tittle))
     
+@client.command(name='pause', help='This command pauses the song')
+async def pause(ctx):
+    voice_client = ctx.message.guild.voice_client
+    if voice_client.is_playing():
+        await voice_client.pause()
+    else:
+        await ctx.send("Estou pausado.")
+        
+@client.command(name='resume', help='Resumes the song')
+async def resume(ctx):
+    voice_client = ctx.message.guild.voice_client
+    if voice_client.is_paused():
+        await voice_client.resume()
+    else:
+        await ctx.send("Eu voltei") 
+    
 @client.command(name='stop', help='This command stops the music')
 async def stop(ctx):
     voice_client = ctx.message.guild.voice_client
     await voice_client.disconnect()    
     
-@tasks.loop(seconds=60)
+@tasks.loop(seconds=3600)
 async def change_status():
     await client.change_presence(activity=discord.Game(choice(status)))
 
-
-client.run("ODgxMzg4NDA4OTg2MDMwMDgx.GUvx3b.xOsVBoVWPgMGSB6_YKxsRctvHNjfXgYly6nOAk")
+client.run(TOKEN)
